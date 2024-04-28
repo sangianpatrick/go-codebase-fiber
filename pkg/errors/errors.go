@@ -1,6 +1,11 @@
 package errors
 
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/sangianpatrick/go-codebase-fiber/pkg/status"
+)
 
 type Error struct {
 	httpStatusCode int
@@ -30,4 +35,25 @@ func (e Error) Status() string {
 
 func (e Error) Message() string {
 	return e.message
+}
+
+func Destruct(err error) *Error {
+	if err == nil {
+		return nil
+	}
+	ae, ok := err.(*Error)
+	if !ok {
+		return New(http.StatusInternalServerError, status.INTERNAL_SERVER_ERROR, "an error occured while attempting request")
+	}
+
+	return ae
+}
+
+func MatchStatus(err error, s string) bool {
+	if err == nil {
+		return false
+	}
+	ae := Destruct(err)
+
+	return ae.Status() == s
 }
