@@ -1,1 +1,12 @@
 # go-codebase-fiber
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=bugs)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=coverage)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=patrickproject_go-codebase-fiber&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=patrickproject_go-codebase-fiber)
