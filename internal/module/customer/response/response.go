@@ -1,4 +1,4 @@
-package customer
+package response
 
 import (
 	"time"
@@ -15,7 +15,4 @@ type CustomerResponse struct {
 	CreatedAt          time.Time `json:"created_at"`
 }
 
-type SignUpResponse struct {
-	Customer              CustomerResponse `json:"customer"`
-	VerificationExpiresAt time.Time        `json:"verification_expires_at"`
-}
+type SignUpResponse CustomerResponse

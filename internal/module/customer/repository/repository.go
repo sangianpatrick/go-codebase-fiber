@@ -1,21 +1,21 @@
-package customer
+package repository
 
 import (
 	"context"
 	"database/sql"
 
-	"github.com/sangianpatrick/go-codebase-fiber/pkg/applogger"
-	"github.com/sangianpatrick/go-codebase-fiber/pkg/errors"
-	"go.uber.org/zap"
+	"github.com/sangianpatrick/go-codebase-fiber/internal/module/customer/entity"
+	"github.com/sangianpatrick/go-codebase-fiber/internal/pkg/applogger"
+	"github.com/sangianpatrick/go-codebase-fiber/internal/pkg/errors"
 )
 
-type Repository interface {
+type CustomerRepository interface {
 	BeginTx(ctx context.Context) (*sql.Tx, error)
 	RollbackTx(ctx context.Context, tx *sql.Tx) error
 	CommitTx(ctx context.Context, tx *sql.Tx) error
 
-	Save(ctx context.Context, c Customer, tx *sql.Tx) error
-	FindByEmail(ctx context.Context, email string, tx *sql.Tx) (Customer, error)
+	Save(ctx context.Context, c entity.Customer, tx *sql.Tx) error
+	FindByEmail(ctx context.Context, email string, tx *sql.Tx) (entity.Customer, error)
 }
 
 type sqlCommand interface {
@@ -25,23 +25,23 @@ type sqlCommand interface {
 	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
 }
 
-type repository struct {
-	logger *applogger.ZapLogger
+type customerRepository struct {
+	logger applogger.AppLogger
 	db     *sql.DB
 }
 
-func NewRepository(logger *applogger.ZapLogger, db *sql.DB) Repository {
-	return &repository{
+func NewRepository(logger applogger.AppLogger, db *sql.DB) CustomerRepository {
+	return &customerRepository{
 		logger: logger,
 		db:     db,
 	}
 }
 
 // BeginTx implements Repository.
-func (r *repository) BeginTx(ctx context.Context) (*sql.Tx, error) {
+func (r *customerRepository) BeginTx(ctx context.Context) (*sql.Tx, error) {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
-		r.logger.Error(ctx, err.Error(), zap.Error(err))
+		r.logger.Error(ctx, err.Error(), applogger.Error(err))
 		return nil, err
 	}
 
@@ -49,9 +49,9 @@ func (r *repository) BeginTx(ctx context.Context) (*sql.Tx, error) {
 }
 
 // CommitTx implements Repository.
-func (r *repository) CommitTx(ctx context.Context, tx *sql.Tx) error {
+func (r *customerRepository) CommitTx(ctx context.Context, tx *sql.Tx) error {
 	if err := tx.Commit(); err != nil {
-		r.logger.Error(ctx, err.Error(), zap.Error(err))
+		r.logger.Error(ctx, err.Error(), applogger.Error(err))
 		return err
 	}
 
@@ -59,16 +59,16 @@ func (r *repository) CommitTx(ctx context.Context, tx *sql.Tx) error {
 }
 
 // RollbackTx implements Repository.
-func (r *repository) RollbackTx(ctx context.Context, tx *sql.Tx) error {
+func (r *customerRepository) RollbackTx(ctx context.Context, tx *sql.Tx) error {
 	if err := tx.Rollback(); err != nil {
-		r.logger.Error(ctx, err.Error(), zap.Error(err))
+		r.logger.Error(ctx, err.Error(), applogger.Error(err))
 		return err
 	}
 
 	return nil
 }
 
-func (r *repository) query(ctx context.Context, query string, cmd sqlCommand, args ...interface{}) ([]Customer, error) {
+func (r *customerRepository) query(ctx context.Context, query string, cmd sqlCommand, args ...interface{}) ([]entity.Customer, error) {
 	stmt, err := cmd.PrepareContext(ctx, query)
 	if err != nil {
 		return nil, err
@@ -81,9 +81,9 @@ func (r *repository) query(ctx context.Context, query string, cmd sqlCommand, ar
 	}
 	defer rows.Close()
 
-	data := make([]Customer, 0)
+	data := make([]entity.Customer, 0)
 	for rows.Next() {
-		var c Customer
+		var c entity.Customer
 		err := rows.Scan(
 			&c.ID, &c.Email, &c.Firstname, &c.Lastname, &c.VerificationStatus,
 			&c.MemberStatus, &c.Password, &c.PasswordSalt, &c.CreatedAt, &c.UpdatedAt,
@@ -99,7 +99,7 @@ func (r *repository) query(ctx context.Context, query string, cmd sqlCommand, ar
 	return data, nil
 }
 
-func (r *repository) exec(ctx context.Context, query string, cmd sqlCommand, args ...interface{}) error {
+func (r *customerRepository) exec(ctx context.Context, query string, cmd sqlCommand, args ...interface{}) error {
 	stmt, err := cmd.PrepareContext(ctx, query)
 	if err != nil {
 		return err
@@ -114,7 +114,7 @@ func (r *repository) exec(ctx context.Context, query string, cmd sqlCommand, arg
 	return nil
 }
 
-func (r *repository) FindByEmail(ctx context.Context, email string, tx *sql.Tx) (Customer, error) {
+func (r *customerRepository) FindByEmail(ctx context.Context, email string, tx *sql.Tx) (entity.Customer, error) {
 	var cmd sqlCommand = r.db
 
 	if tx != nil {
@@ -133,19 +133,19 @@ func (r *repository) FindByEmail(ctx context.Context, email string, tx *sql.Tx) 
 
 	data, err := r.query(ctx, query, cmd, email)
 	if err != nil {
-		r.logger.Error(ctx, "", zap.Error(err))
-		return Customer{}, err
+		r.logger.Error(ctx, err.Error(), applogger.Error(err))
+		return entity.Customer{}, err
 	}
 
 	if len(data) < 1 {
-		return Customer{}, errors.NotFound
+		return entity.Customer{}, errors.NotFound
 	}
 
 	return data[0], nil
 }
 
 // Save implements Repository.
-func (r *repository) Save(ctx context.Context, c Customer, tx *sql.Tx) error {
+func (r *customerRepository) Save(ctx context.Context, c entity.Customer, tx *sql.Tx) error {
 	var cmd sqlCommand = r.db
 
 	if tx != nil {
@@ -168,7 +168,7 @@ func (r *repository) Save(ctx context.Context, c Customer, tx *sql.Tx) error {
 		c.MemberStatus, c.Password, c.PasswordSalt, c.CreatedAt, c.UpdatedAt,
 	)
 	if err != nil {
-		r.logger.Error(ctx, "", zap.Error(err))
+		r.logger.Error(ctx, err.Error(), applogger.Error(err))
 		return err
 	}
 

@@ -1,4 +1,4 @@
-package customer
+package request
 
 type SignUpRequest struct {
 	Firstname string `json:"firstname" validate:"min=2"`

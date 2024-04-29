@@ -3,7 +3,7 @@ package errors
 import (
 	"net/http"
 
-	"github.com/sangianpatrick/go-codebase-fiber/pkg/status"
+	"github.com/sangianpatrick/go-codebase-fiber/internal/pkg/status"
 )
 
 var (
